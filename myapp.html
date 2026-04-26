@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FINAL APP</title>
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(to right, #667eea, #764ba2);
+  text-align: center;
+  color: white;
+}
+
+h2 {
+  margin-top: 30px;
+}
+
+input {
+  padding: 10px;
+  width: 220px;
+  border: none;
+  border-radius: 5px;
+}
+
+button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background: #fff;
+  color: #333;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #ddd;
+}
+
+li {
+  list-style: none;
+  margin: 10px auto;
+  background: white;
+  color: black;
+  padding: 10px;
+  border-radius: 5px;
+  width: 300px;
+}
+</style>
+  
+</head>
+
+<body>
+
+<h2>Task Manager</h2>
+
+<input type="text" id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add</button>
+
+<ul id="taskList"></ul>
+
+<script>
+const API = "http://localhost:3000/tasks";
+
+// LOAD TASKS
+async function loadTasks() {
+  const res = await fetch(API);
+  const data = await res.json();
+
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+
+  data.forEach((task, index) => {
+    if (!task) return;
+
+    const li = document.createElement("li");
+
+    li.innerHTML = `
+      ${task.title} - ${task.completed ? "✔️" : "❌"}
+      <button onclick="toggleTask(${index})">Done</button>
+      <button onclick="deleteTask(${index})">Delete</button>
+    `;
+
+    list.appendChild(li);
+  });
+}
+
+// TOGGLE TASK
+async function toggleTask(index) {
+  await fetch(API + "/" + index, {
+    method: "PUT"
+  });
+
+  loadTasks();
+}
+
+// ADD TASK
+async function addTask() {
+  
+
+  const inputBox = document.getElementById("taskInput");
+  const input = inputBox.value;
+
+  if (!input) {
+    alert("Please enter a task");
+    return;
+  }
+
+  await fetch(API, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title: input, completed: false })
+  });
+
+  inputBox.value = "";
+  loadTasks();
+}
+
+// DELETE TASK
+async function deleteTask(index) {
+  await fetch(API + "/" + index, { method: "DELETE" });
+  loadTasks();
+}
+
+// INITIAL LOAD
+loadTasks();
+</script>
+
+</body>
+</html>
