@@ -11,15 +11,14 @@ app.use(express.json());
 let tasks = [];
 
 // Home route
-app.get("/", (req, res) => {
-  res.send("Task Manager API Running 🚀");
+app.get("/tasks", (req, res) => {
+res.json(tasks);
 });
 
 // CREATE TASK
 app.post("/tasks", (req, res) => {
-  const task = req.body;
-  tasks.push(task);
-  res.send("Task added successfully");
+  tasks.push(req.body);
+  res.json("{ message":"Task added"});
 });
 
 // VIEW TASKS
