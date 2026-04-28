@@ -1,62 +1,112 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FINAL APP</title>
+  <title>Task Manager Pro</title>
+
 <style>
 body {
-  font-family: Arial;
-  background: linear-gradient(to right, #667eea, #764ba2);
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1d2b64, #f8cdda);
   text-align: center;
   color: white;
 }
 
 h2 {
   margin-top: 30px;
+  font-size: 32px;
+  letter-spacing: 1px;
+}
+
+.container {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 15px;
+  width: 350px;
+  margin: 30px auto;
+  backdrop-filter: blur(10px);
+  box-shadow: 0px 5px 20px rgba(0,0,0,0.3);
 }
 
 input {
   padding: 10px;
-  width: 220px;
+  width: 65%;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  outline: none;
 }
 
 button {
   padding: 8px 12px;
   margin: 5px;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  background: #fff;
-  color: #333;
   font-weight: bold;
+  transition: 0.3s;
 }
 
-button:hover {
-  background: #ddd;
+.add-btn {
+  background: #00ffcc;
+  color: black;
+}
+
+.add-btn:hover {
+  background: #00ccaa;
+}
+
+.done-btn {
+  background: #4CAF50;
+  color: white;
+}
+
+.delete-btn {
+  background: #ff4d4d;
+  color: white;
 }
 
 li {
   list-style: none;
-  margin: 10px auto;
+  margin: 10px;
   background: white;
   color: black;
   padding: 10px;
-  border-radius: 5px;
-  width: 300px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeIn 0.3s ease-in;
+}
+
+.task-text {
+  flex: 1;
+  text-align: left;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: gray;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
-  
+
 </head>
 
 <body>
 
-<h2>Task Manager</h2>
+<h2>✨ Task Manager Pro</h2>
 
-<input type="text" id="taskInput" placeholder="Enter task">
-<button onclick="addTask()">Add</button>
+<div class="container">
+
+<input type="text" id="taskInput" placeholder="Enter your task...">
+<button class="add-btn" onclick="addTask()">Add</button>
 
 <ul id="taskList"></ul>
+
+</div>
 
 <script>
 const API = "http://localhost:3000/tasks";
@@ -75,33 +125,33 @@ async function loadTasks() {
     const li = document.createElement("li");
 
     li.innerHTML = `
-      ${task.title} - ${task.completed ? "✔️" : "❌"}
-      <button onclick="toggleTask(${index})">Done</button>
-      <button onclick="deleteTask(${index})">Delete</button>
+      <span class="task-text ${task.completed ? "completed" : ""}">
+        ${task.title}
+      </span>
+
+      <div>
+        <button class="done-btn" onclick="toggleTask(${index})">✔</button>
+        <button class="delete-btn" onclick="deleteTask(${index})">✖</button>
+      </div>
     `;
 
     list.appendChild(li);
   });
 }
 
-// TOGGLE TASK
+// TOGGLE
 async function toggleTask(index) {
-  await fetch(API + "/" + index, {
-    method: "PUT"
-  });
-
+  await fetch(API + "/" + index, { method: "PUT" });
   loadTasks();
 }
 
-// ADD TASK
+// ADD
 async function addTask() {
-  
-
   const inputBox = document.getElementById("taskInput");
   const input = inputBox.value;
 
   if (!input) {
-    alert("Please enter a task");
+    alert("Enter a task!");
     return;
   }
 
@@ -115,13 +165,12 @@ async function addTask() {
   loadTasks();
 }
 
-// DELETE TASK
+// DELETE
 async function deleteTask(index) {
   await fetch(API + "/" + index, { method: "DELETE" });
   loadTasks();
 }
 
-// INITIAL LOAD
 loadTasks();
 </script>
 
