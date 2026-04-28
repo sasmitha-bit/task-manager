@@ -11,6 +11,13 @@ let tasks = [];
 app.get("/", (req, res) => {
   res.send("Task Manager API Running 🚀");
 });
+const path = require("path");
+
+app.use(express.static(__dirname));
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "myapp.html"));
+});
 
 app.get("/tasks", (req, res) => {
   res.json(tasks);
