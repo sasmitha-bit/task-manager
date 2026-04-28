@@ -8,9 +8,6 @@ app.use(express.json());
 
 let tasks = [];
 
-app.get("/", (req, res) => {
-  res.send("Task Manager API Running 🚀");
-});
 const path = require("path");
 
 app.use(express.static(__dirname));
